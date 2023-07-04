@@ -247,3 +247,58 @@ function register_namespace($namespace = __NAMESPACE__)
 {
     $_SESSION['namespace'] = $namespace;
 }
+
+function flash($message = '', $type = 'info')
+{
+    if (!isset($_SESSION[$GLOBALS['SEMECFG']->saltkey])) $_SESSION[$GLOBALS['SEMECFG']->saltkey] = '';
+    $s = $_SESSION[$GLOBALS['SEMECFG']->saltkey];
+    if (!is_object($s)) $s = new stdClass();
+    if (!isset($s->flash)) {
+        $s->flash = new stdClass();
+        $s->flash->message = '';
+        $s->flash->status = 0;
+        $s->flash->type = $type;
+    }
+    if (strlen($message) > 0) {
+        $s->flash->message = $message;
+        $s->flash->status = 1;
+        $s->flash->type = $type;
+    }
+    $_SESSION[$GLOBALS['SEMECFG']->saltkey] = $s;
+    return $s;
+}
+
+function flashFrame($type = 'danger')
+{
+    $sess = $_SESSION[$GLOBALS['SEMECFG']->saltkey];
+    if (isset($sess->flash)) {
+        if (strlen($sess->flash->message) > 0 && $sess->flash->status === 1) { ?>
+            <div class="row">
+                <!-- Message Notification -->
+                <div class="col-sm-12 alert alert-<?=$type?>">
+                    <p class="white-text"><b>Alert:</b> <?= $sess->flash->message ?></p>
+                </div>
+            </div>
+<?php }
+    }
+    clearFlash();
+}
+
+function clearFlash()
+{
+    if (!isset($_SESSION[$GLOBALS['SEMECFG']->saltkey])) $_SESSION[$GLOBALS['SEMECFG']->saltkey] = '';
+    $s = $_SESSION[$GLOBALS['SEMECFG']->saltkey];
+    if (!is_object($s)) $s = new stdClass();
+    if (!isset($s->flash)) {
+        $s->flash = new stdClass();
+        $s->flash->message = '';
+        $s->flash->status = 0;
+        $s->flash->type = 'info';
+    }
+    $s->flash->message = '';
+    $s->flash->status = 0;
+    $s->flash->type = 'info';
+    $_SESSION[$GLOBALS['SEMECFG']->saltkey] = $s;
+    return $s;
+}
+

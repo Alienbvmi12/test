@@ -1,0 +1,24 @@
+File/method/variables that i edit
+
+1. loadLayout()
+    Mengubah page/ menjadi layout/ di parameter method $this->view().
+
+2. putJsContent()
+    Mengubah ekstensi dari .php menjadi .js
+
+3. Mengubah struktur view
+
+4. Penambahan function
+
+    protected function setUpHeader($title, $descriptions, $keyword, $author){
+        $this->setTitle($title);
+        $this->setDescription($descriptions);
+        $this->setKeyword($keyword);
+        $this->setAuthor($author);
+    }
+
+5. Membuat sistem flash pada Functions.php
+    -flash()
+    -showFlash()
+    -clearFlash()
+

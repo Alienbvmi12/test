@@ -1,0 +1,55 @@
+{
+    "script": [
+        {
+            "src": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/extra-libs/DataTables/jQuery-3.6.0/jquery-3.6.0.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/extra-libs/DataTables/datatables.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/extra-libs/sparkline/sparkline.js"
+        },
+        {
+            "src": "{{base_url}}/public/dist/js/waves.js"
+        },
+        {
+            "src": "{{base_url}}/public/dist/js/sidebarmenu.js"
+        },
+        {
+            "src": "{{base_url}}/public/dist/js/custom.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/excanvas.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/jquery.flot.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/jquery.flot.pie.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/jquery.flot.time.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/jquery.flot.stack.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot/jquery.flot.crosshair.js"
+        },
+        {
+            "src": "{{base_url}}/public/assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"
+        },
+        {
+            "src": "{{base_url}}/public/dist/js/pages/chart/chart-page-init.js"
+        }
+    ]
+}
