@@ -10,3 +10,4 @@ class B_User_Model extends Alien_Core_Model
     return $this->db->query("select * from user where username='$cred' or email='$cred' or telepon='$cred'");
   }
 }
+

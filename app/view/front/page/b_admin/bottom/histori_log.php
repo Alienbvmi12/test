@@ -1,7 +1,10 @@
 <script>
-    const requestUrl = '<?= base_url() ?>/admin/log/getLogByDate/'+ $('#date').val();
+    let deleteList = [];
+    const requestUrl = '<?= base_url() ?>/admin/log/getLogByDate/' + $('#date').val();
+    const requestDeleteUrl = '<?= base_url() ?>/admin/log/delete';
     const logTable = $('#table_log').DataTable({
-        dom: 'B<"mt-2"l>frtip',
+        serverSide : true,
+        dom: 'B<"mt-2"l>frti<"d-flex justify-content-end actions mb-2">p',
         ajax: {
             url: requestUrl,
             dataSrc: 'data'
@@ -25,12 +28,12 @@
             {
                 data: 'detail',
                 title: 'Detil'
+            },
+            {
+                defaultContent: '<input type="checkbox" class="form-check-input" onclick="addToDeleteList(this)">',
+                title: 'Select'
             }
         ],
-        columnDefs: [{
-            targets: [0, 1, 2, 3, 4], // Specify the columns you want to customize
-            className: 'text-uppercase text-dark text-xxs font-weight-bolder opacity-7'
-        }],
         buttons: [{
                 extend: 'print',
                 exportOptions: {
@@ -64,10 +67,79 @@
         ]
     });
 
-    document.getElementById('date').addEventListener('change', () => {
-        const newUrl = '<?= base_url() ?>/admin/log/getLogByDate/'+ $('#date').val();
+    //Menambahkan list id untuk di delete
+
+    function addToDeleteList(context) {
+        let id = context.parentNode.parentNode.childNodes[0].innerHTML;
+        console.log(id);
+        if (context.checked) {
+            deleteList.push(id)
+        } else {
+            for (i = 0; i < deleteList.length; i++) {
+                if (deleteList[i] == id) {
+                    deleteList.splice(i, 1);
+                }
+            }
+        }
+        console.log(deleteList);
+    }
+
+    //Request delete ke server
+
+    function deleteLogList(type) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You can't revert this",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: requestDeleteUrl,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    data : JSON.stringify({
+                        data : deleteList,
+                        type: type,
+                        date: $('#date').val()
+                    }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        reloadTable();
+                    },
+                    error: function(xhr, status, error) {
+                        swalWithBootstrapButtons.fire(
+                            'Error',
+                            'An error occured: ' + error,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+    function reloadTable() {
+        const newUrl = '<?= base_url() ?>/admin/log/getLogByDate/' + $('#date').val();
+        deleteList = [];
         console.log(logTable.ajax);
         logTable.ajax.url(newUrl);
         logTable.ajax.reload(null, false);
-    });
+    }
+
+    document.getElementsByClassName('actions')[0].innerHTML += `
+        <button class="btn btn-dark me-1" style="background : black" onclick="deleteLogList('all')">delete all</button>
+        <button class="btn btn-danger" onclick="deleteLogList('list')">delete</button>`
+
+    document.getElementById('date').addEventListener('change', reloadTable);
 </script>

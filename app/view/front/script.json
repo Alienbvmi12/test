@@ -50,6 +50,9 @@
         },
         {
             "src": "{{base_url}}/public/dist/js/pages/chart/chart-page-init.js"
+        },
+        {
+            "src": "https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"
         }
     ]
 }

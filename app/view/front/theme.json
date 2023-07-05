@@ -32,6 +32,14 @@
         {
             "rel" : "stylesheet",
             "href" : "{{base_url}}/public/dist/css/style.min.css"
-        }
+        },
+        {
+            "rel" : "stylesheet",
+            "href" : "{{base_url}}/public/dist/css/index.css"
+        },
+        {
+            "rel" : "stylesheet",
+            "href" : "https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css"
+        }    
     ]
 }
