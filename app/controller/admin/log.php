@@ -7,6 +7,7 @@ class Log extends Alien_Core_Controller
     parent::__construct();
     $this->setTheme('front');
     $this->load('c_log_model', 'tbl_log');
+    $this->load('b_user_model', 'tbl_user');
     $this->lib("sene_json_engine", "json");
   }
   public function index()
@@ -21,8 +22,6 @@ class Log extends Alien_Core_Controller
       );
 
       $data['sess'] = $this->getKey();
-      $data['log'] = json_encode($this->tbl_log->query("select log.id as id, aktivitas, waktu, user.nama as nama, detail from log join user on user.id=log.id_user"));
-
 
       $this->putThemeContent("page/b_admin/histori_log", $data); //pass data to view
       $this->putJsReady("page/b_admin/bottom/histori_log", $data); //pass data to view
@@ -46,16 +45,19 @@ class Log extends Alien_Core_Controller
       if($dir === 'asc'){
         $dir = '';
       }
-      $data['data'] = $this->tbl_log->query("select log.id as id, aktivitas, waktu, user.nama as nama,
+      $data['data'] = $this->tbl_log->query("
+          select {$this->tbl_log->tbl}.id as id, aktivitas, waktu, 
+          concat('<a href=\"".base_url()."/admin/user/detail/',
+           {$this->tbl_user->tbl}.id, '\">', {$this->tbl_user->tbl}.nama, '</a>') as nama,
           if(detail is null, '-', detail) as detail 
-          from log join user on user.id=log.id_user 
-          where (log.id like '%$search%' or aktivitas like '%$search%' or
-          waktu like '%$search%' or user.nama like '%$search%' or
-          detail like '%$search%') 
-          and date(log.waktu)='$date' 
+          from log join user on {$this->tbl_user->tbl}.id={$this->tbl_log->tbl}.id_user 
+          where ({$this->tbl_log->tbl}.id like '%$search%' or aktivitas like '%$search%' or
+          waktu like '%$search%' or {$this->tbl_user->tbl}.nama like '%$search%' or
+          detail like '%$search%')
+          and date({$this->tbl_log->tbl}.waktu)='$date' 
           order by $column $dir 
           limit $start,$length");
-      $count = $this->tbl_log->countWhere($date, 'date(waktu)');
+      $count = (int) $this->tbl_log->query("select count(id) as count from {$this->tbl_log->tbl} where date(waktu)='$date'")[0]->count;
       $data['recordsTotal'] = $count;
       $data['recordsFiltered'] = $count;
       $this->json->out($data);

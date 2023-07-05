@@ -13,11 +13,3 @@
         </div>
     </div>
 </div>
-<script>
-    const data = <?= $log ?>;
-    data.forEach(data => {
-        if(!data.detail){
-            data.detail = "-";
-        }
-    });
-</script>

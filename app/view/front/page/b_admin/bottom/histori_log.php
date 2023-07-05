@@ -138,8 +138,8 @@
     }
 
     document.getElementsByClassName('actions')[0].innerHTML += `
-        <button class="btn btn-dark me-1" style="background : black" onclick="deleteLogList('all')">delete all</button>
-        <button class="btn btn-danger" onclick="deleteLogList('list')">delete</button>`
+        <button class="btn btn-dark me-1" style="background : black" onclick="deleteLogList('all')">Hapus semua</button>
+        <button class="btn btn-danger" onclick="deleteLogList('list')">Hapus</button>`;
 
     document.getElementById('date').addEventListener('change', reloadTable);
 </script>

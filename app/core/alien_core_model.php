@@ -1,6 +1,6 @@
 <?php
 class Alien_Core_Model extends SENE_Model{
-  protected $tbl = '';
+  public $tbl = '';
   protected $tbl_as = '';
 
   public function __construct(){
@@ -23,6 +23,7 @@ class Alien_Core_Model extends SENE_Model{
     return 0;
   }
   public function countWhere($val, $col = "id"){
+    $this->db->where($col,$val);
     $this->db->select_as('COUNT(*)','total',0);
     $this->db->from($this->tbl,$this->tbl_as);
     $d = $this->db->get_first();
@@ -34,7 +35,7 @@ class Alien_Core_Model extends SENE_Model{
     $this->db->from($this->tbl,$this->tbl_as);
     return $this->db->get_first();
   }
-  public function set($di=array()){
+  public function create($di=array()){
     $this->db->insert($this->tbl,$di);
     return $this->db->last_id;
   }
