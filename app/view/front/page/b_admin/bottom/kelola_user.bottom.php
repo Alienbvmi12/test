@@ -115,7 +115,7 @@
         confirmAndExec(function() {
             $.ajax({
                 url: requestUpdateUrl,
-                type: 'UPDATE',
+                type: 'PUT',
                 dataType: 'json',
                 data: JSON.stringify({
                     id: $('#id').val(),

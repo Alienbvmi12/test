@@ -1,5 +1,10 @@
-.custh th{
-    font-weight : bold;
+.custh th {
+    font-weight: bold;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    text-transform : uppercase;
+    text-transform: uppercase;
+}
+
+.barcode {
+    font-family: 'Libre Barcode 39 Extended Text', cursive;
+    font-size: 30px;
 }

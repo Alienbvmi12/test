@@ -19,7 +19,7 @@
             if (data.aktivitas === 'create') {
                 $(row).addClass('table-success');
             }
-            if (data.aktivitas === 'login') {
+            if (data.aktivitas === 'put') {
                 $(row).addClass('table-info');
             }
             if (data.aktivitas === 'logout') {
