@@ -12,13 +12,13 @@
         <b class="logo-icon ps-2">
           <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
           <!-- Dark Logo icon -->
-          <img src="<?=base_url()?>/public/assets/images/logo-icon.png" alt="homepage" class="light-logo" width="25" />
+          <img src="<?= base_url() ?>/public/assets/images/logo-icon.png" alt="homepage" class="light-logo" width="25" />
         </b>
         <!--End Logo icon -->
         <!-- Logo text -->
         <span class="logo-text ms-2">
           <!-- dark Logo text -->
-          <img src="<?=base_url()?>/public/assets/images/logo-text.png" alt="homepage" class="light-logo" />
+          <img src="<?= base_url() ?>/public/assets/images/logo-text.png" alt="homepage" class="light-logo" />
         </span>
         <!-- Logo icon -->
         <!-- <b class="logo-icon"> -->
@@ -74,7 +74,7 @@
                     waves-effect waves-dark
                     pro-pic
                   " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="<?=base_url()?>/public/assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31" />
+          <img src="<?= base_url() ?>/public/assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31" />
         </a>
         <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-account me-1 ms-1"></i> My Profile</a>
@@ -97,6 +97,51 @@
       </ul>
     </div>
   </nav>
+  <?php
+  $menu = [
+    [ //admin
+      [
+        'title' => 'Kelola User',
+        'Icon' => 'mdi-account-card-details',
+        'url' => base_url('/admin/user')
+      ],
+      [
+        'title' => 'Kelola Laporan',
+        'Icon' => 'mdi-chart-bar',
+        'url' => base_url('/admin/laporan')
+      ],
+      [
+        'title' => 'Kelola Supplier',
+        'Icon' => 'mdi-clipboard-flow',
+        'url' => base_url('/admin/supplier')
+      ],
+      [
+        'title' => 'Histori Log',
+        'Icon' => 'mdi-clock',
+        'url' => base_url('/admin/log')
+      ],
+    ],
+    [ //gudang
+      [
+        'title' => 'Kelola Barang',
+        'Icon' => 'mdi-cube-outline',
+        'url' => base_url('/gudang/barang')
+      ],
+      [
+        'title' => 'Catatan Stok',
+        'Icon' => 'mdi-clipboard-text',
+        'url' => base_url('/gudang/stok')
+      ],
+    ],
+    [ //kasir
+      [
+        'title' => 'Kasir',
+        'Icon' => 'mdi-clipboard-flow',
+        'url' => base_url('/kasir')
+      ]
+    ]
+  ];
+  ?>
 </header>
 <!-- ============================================================== -->
 <!-- End Topbar header -->
@@ -111,20 +156,21 @@
     <nav class="sidebar-nav">
       <ul id="sidebarnav" class="pt-4">
         <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?=base_url()?>" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a>
+          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url() ?>" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a>
         </li>
+        <?php
+        foreach ($menu[$sess->user->tipe_user] as $item) {
+        ?>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= $item['url'] ?>" aria-expanded="false"><i class="mdi <?= $item['Icon'] ?>"></i><span class="hide-menu"><?= $item['title'] ?></span></a>
+          </li>
+        <?php
+        }
+        ?>
         <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?=base_url('/admin/user')?>" aria-expanded="false"><i class="mdi mdi-account-card-details"></i><span class="hide-menu">Kelola User</span></a>
+          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/auth/login/logout') ?>" aria-expanded="false"><i class="mdi mdi-export"></i><span class="hide-menu">Logout</span></a>
         </li>
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?=base_url('/admin/laporan')?>" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">Kelola Laporan</span></a>
-        </li>
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?=base_url('/admin/log')?>" aria-expanded="false"><i class="mdi mdi-clock"></i><span class="hide-menu">Histori Log</span></a>
-        </li>
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?=base_url('/auth/login/logout')?>" aria-expanded="false"><i class="mdi mdi-export"></i><span class="hide-menu">Logout</span></a>
-        </li>
+
       </ul>
     </nav>
     <!-- End Sidebar navigation -->

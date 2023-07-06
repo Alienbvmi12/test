@@ -1,9 +1,9 @@
 <script>
-    const requestCreateUrl = '<?= base_url() ?>/admin/user/create';
-    const requestReadUrl = '<?= base_url() ?>/admin/user/read';
-    const requestUpdateUrl = '<?= base_url() ?>/admin/user/update';
-    const requestDeleteUrl = '<?= base_url() ?>/admin/user/delete';
-    const userDetailUrl = '<?= base_url() ?>/admin/user/detail';
+    const requestCreateUrl = '<?= base_url() ?>/admin/supplier/create';
+    const requestReadUrl = '<?= base_url() ?>/admin/supplier/read';
+    const requestUpdateUrl = '<?= base_url() ?>/admin/supplier/update';
+    const requestDeleteUrl = '<?= base_url() ?>/admin/supplier/delete';
+    const userDetailUrl = '<?= base_url() ?>/admin/supplier/detail';
     const logTable = $('#table_log').DataTable({
         serverSide: true,
         dom: 'B<"mt-2"l>frti<"d-flex justify-content-end actions mb-2">p',
@@ -16,30 +16,22 @@
                 title: 'ID'
             },
             {
-                data: 'tipe_user',
-                title: 'Role'
-            },
-            {
-                data: 'nama',
-                title: 'Nama'
-            },
-            {
-                data: 'username',
-                title: 'Username'
-            },
-            {
-                data: 'email',
-                title: 'Email'
+                data: 'nama_supplier',
+                title: 'Supplier'
             },
             {
                 data: 'telepon',
-                title: 'Telepon'
+                title: 'No. Telepon'
+            },
+            {
+                data: 'alamat',
+                title: 'Alamat'
             },
             {
                 defaultContent: `
-                    <button class="btn btn-primary btn-sm" onclick="userDetail(this)">Detail</button>
+                    <button class="btn btn-primary btn-sm" onclick="supplierDetail(this)">Detail</button>
                     <button class="btn btn-warning btn-sm" onclick="modal(this, 'edit')" data-bs-toggle="modal" data-bs-target="#editm">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Hapus</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteSupplier(this)">Hapus</button>
                 `,
                 title: 'Action'
             }
@@ -79,22 +71,19 @@
 
     //Menambahkan list id untuk di delete
 
-    function createUser() {
+    function createSupplier() {
         $.ajax({
             url: requestCreateUrl,
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                tipe_user: $('#tipe_user').val(),
-                nama: $('#nama').val(),
-                email: $('#email').val(),
+                nama_supplier: $('#nama_supplier').val(),
                 telepon: $('#telepon').val(),
-                username: $('#username').val(),
-                password: $('#password').val()
+                alamat: $('#alamat').val()
             }),
             contentType: 'application/json',
             success: function(response) {
-                readUser();
+                readSupplier();
             },
             error: function(xhr, status, error) {
                 Swal.fire(
@@ -106,12 +95,12 @@
         });
     }
 
-    function readUser() {
+    function readSupplier() {
         console.log(logTable.ajax);
         logTable.ajax.reload(null, false);
     }
 
-    function updateUser() {
+    function updateSupplier() {
         confirmAndExec(function() {
             $.ajax({
                 url: requestUpdateUrl,
@@ -119,16 +108,13 @@
                 dataType: 'json',
                 data: JSON.stringify({
                     id: $('#id').val(),
-                    tipe_user: $('#tipe_user').val(),
-                    nama: $('#nama').val(),
-                    email: $('#email').val(),
+                    nama_supplier: $('#nama_supplier').val(),
                     telepon: $('#telepon').val(),
-                    username: $('#username').val(),
-                    password: $('#password').val()
+                    alamat: $('#alamat').val()
                 }),
                 contentType: 'application/json',
                 success: function(response) {
-                    readUser();
+                    readSupplier();
                 },
                 error: function(xhr, status, error) {
                     Swal.fire(
@@ -143,7 +129,7 @@
 
     //Request delete ke server
 
-    function deleteUser(context) {
+    function deleteSupplier(context) {
         let id = context.parentNode.parentNode.childNodes[0].innerHTML;
         confirmAndExec(function() {
             $.ajax({
@@ -155,7 +141,7 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
-                    readUser();
+                    readSupplier();
                 },
                 error: function(xhr, status, error) {
                     Swal.fire(
@@ -173,33 +159,26 @@
 
         if (type === "edit") {
             $('#modal-title').html('Edit');
-            document.getElementById("submit").setAttribute("onclick", "updateUser()");
-            document.getElementById("password").setAttribute("placeholder", "Isi untuk ganti password");
+            document.getElementById("submit").setAttribute("onclick", "updateSupplier()");
         } else {
             $('#modal-title').html('Tambah User Baru');
-            document.getElementById("submit").setAttribute("onclick", "createUser()");
-            document.getElementById("password").setAttribute("placeholder", "Masukan Password");
+            document.getElementById("submit").setAttribute("onclick", "createSupplier()");
         }
 
         //Kosongkan value
 
         $('#id').val('');
-        $('#tipe_user').val('');
-        $('#nama').val('');
-        $('#email').val('');
+        $('#nama_supplier').val('');
         $('#telepon').val('');
-        $('#username').val('');
-        $('#password').val('');
+        $('#alamat').val('');
 
         //Isi value
 
         if (type === "edit") {
             $('#id').val(row.childNodes[0].innerHTML);
-            $('#tipe_user').val(row.childNodes[1].innerHTML);
-            $('#nama').val(row.childNodes[2].innerHTML);
-            $('#username').val(row.childNodes[3].innerHTML);
-            $('#email').val(row.childNodes[4].innerHTML);
-            $('#telepon').val(row.childNodes[5].innerHTML);
+            $('#nama_supplier').val(row.childNodes[1].innerHTML);
+            $('#telepon').val(row.childNodes[2].innerHTML);
+            $('#alamat').val(row.childNodes[3].innerHTML);
         }
     }
 
@@ -226,11 +205,11 @@
         });
     }
 
-    function userDetail(ctx) {
+    function supplierDetail(ctx) {
         const id = ctx.parentNode.parentNode.childNodes[0].innerHTML;
         window.location.href = userDetailUrl + "/" + id;
     }
 
     document.getElementsByClassName('actions')[0].innerHTML += `
-        <button class="btn btn-success text-white" onclick="modal(this, 'add')"  data-bs-toggle="modal" data-bs-target="#editm">Tambahkan User</button>`
+        <button class="btn btn-success text-white" onclick="modal(this, 'add')"  data-bs-toggle="modal" data-bs-target="#editm">Tambahkan Supplier</button>`
 </script>

@@ -64,6 +64,14 @@ class Alien_Core_Controller extends SENE_Controller
         return $currentDateTime;
     }
 
+    public function userTypeFilter($type){
+        // 0 for admin, 1 for gudang, and 2 for kasir
+        $user = $this->getKey()->user;
+        if($user->tipe_user != $type){
+            redir(base_url());
+        }
+    }
+
     public function index()
     {
     }

@@ -13,6 +13,7 @@ class Log extends Alien_Core_Controller
   public function index()
   {
     if ($this->isAuth()) {
+      $this->userTypeFilter(0);
       $data = array();
       $this->setUpHeader(
         "Log History", //title
@@ -47,8 +48,8 @@ class Log extends Alien_Core_Controller
       }
       $data['data'] = $this->tbl_log->query("
           select {$this->tbl_log->tbl}.id as id, aktivitas, waktu, 
-          concat('<a href=\"".base_url()."/admin/user/detail/',
-           {$this->tbl_user->tbl}.id, '\">', {$this->tbl_user->tbl}.nama, '</a>') as nama,
+          concat('<a href=\"".base_url()."/admin/user/detail/', 
+          {$this->tbl_user->tbl}.id, '\">', {$this->tbl_user->tbl}.nama, '</a>') as nama,
           if(detail is null, '-', detail) as detail 
           from log join user on {$this->tbl_user->tbl}.id={$this->tbl_log->tbl}.id_user 
           where ({$this->tbl_log->tbl}.id like '%$search%' or aktivitas like '%$search%' or

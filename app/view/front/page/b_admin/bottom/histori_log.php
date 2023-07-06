@@ -9,6 +9,23 @@
             url: requestUrl,
             dataSrc: 'data'
         },
+        rowCallback: function(row, data) {
+            if (data.aktivitas === 'delete') {
+                $(row).addClass('table-danger');
+            }
+            if (data.aktivitas === 'update') {
+                $(row).addClass('table-warning');
+            }
+            if (data.aktivitas === 'create') {
+                $(row).addClass('table-success');
+            }
+            if (data.aktivitas === 'login') {
+                $(row).addClass('table-info');
+            }
+            if (data.aktivitas === 'logout') {
+                $(row).addClass('table-primary');
+            }
+        },
         columns: [{
                 data: 'id',
                 title: 'ID'

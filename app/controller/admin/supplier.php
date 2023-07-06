@@ -1,5 +1,5 @@
 <?php
-class User extends Alien_Core_Controller
+class Supplier extends Alien_Core_Controller
 {
     private $none;
     public function __construct()
@@ -7,6 +7,7 @@ class User extends Alien_Core_Controller
         parent::__construct();
         $this->setTheme('front');
         $this->load('b_user_model', 'tbl_user');
+        $this->load('b_supplier_model', 'tbl_supplier');
         $this->load('c_log_model', 'tbl_log');
         $this->lib("sene_json_engine", "json");
     }
@@ -16,16 +17,16 @@ class User extends Alien_Core_Controller
             $this->userTypeFilter(0);
             $data = array();
             $this->setUpHeader(
-                "Kelola User", //title
-                "Pengelolaan User", //descriptions
+                "Kelola Supplier", //title
+                "Pengelolaan Supplier", //descriptions
                 "Murni alien toko pengelolaan toko", //keyword
                 "Muhammad Rayhan Fathurrakhman" //author
             );
 
             $data['sess'] = $this->getKey();
 
-            $this->putThemeContent("page/b_admin/kelola_user", $data); //pass data to view
-            $this->putJsReady("page/b_admin/bottom/kelola_user.bottom", $data); //pass data to view
+            $this->putThemeContent("page/b_admin/kelola_supplier", $data); //pass data to view
+            $this->putJsReady("page/b_admin/bottom/kelola_supplier.bottom", $data); //pass data to view
             $this->loadLayout("layout1", $data);
             $this->render();
         }
@@ -41,16 +42,8 @@ class User extends Alien_Core_Controller
                 "Muhammad Rayhan Fathurrakhman" //author
             );
 
-            $role = array(
-                'admin',
-                'gudang',
-                'kasir'
-            );
-
             $data['sess'] = $this->getKey();
-            $data['data'] = $this->tbl_user->getById($id);
-            $data['data']->tipe_user = $role[$data['data']->tipe_user];
-            $data['data']->password = "xxxxxxxxxxx";
+            $data['data'] = $this->tbl_supplier->getById($id);
 
             $this->putThemeContent("page/detail", $data); //pass data to view
             $this->loadLayout("layout1.nonav", $data);
@@ -61,20 +54,13 @@ class User extends Alien_Core_Controller
     public function create()
     {
         $request = json_decode(file_get_contents('php://input'), true);
-        $request['password'] = password_hash($request['password'], PASSWORD_BCRYPT);
-        $role = array(
-            'admin' => 0,
-            'gudang' => 1,
-            'kasir' => 2
-        );
-        $request['tipe_user'] = $role[$request['tipe_user']];
         try {
-            $create = $this->tbl_user->create($request);
+            $create = $this->tbl_supplier->create($request);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'create',
                 'id_user' => $this->getKey()->user->id,
-                'detail' => 'Membuat user baru, user.id: ' . $create
+                'detail' => 'Membuat suppplier baru, supplier.id: ' . $create
             ]);
             $data = array();
             $data['status'] = 200;
@@ -97,21 +83,18 @@ class User extends Alien_Core_Controller
         $order = $_GET['order'];
         $start = ((int)$_GET['start']);
         $length = $_GET['length'];
-        $column = $this->tbl_user->getColumnName($_GET['order'][0]['column'])[0]->COLUMN_NAME;
+        $column = $this->tbl_supplier->getColumnName($_GET['order'][0]['column'])[0]->COLUMN_NAME;
         $dir = $_GET['order'][0]['dir'];
         if ($dir === 'asc') {
             $dir = '';
         }
-        $data['data'] = $this->tbl_user->query("select id, if(tipe_user = 0, 'admin', 
-            if(tipe_user = 1, 'gudang', if(tipe_user = 2, 'kasir', 'unknown'))) 
-            as tipe_user, nama, email, telepon, username 
-            from {$this->tbl_user->tbl} 
-            where (tipe_user like '%$search%' or id like '%$search%' or
-            nama like '%$search%' or email like '%$search%' or
-            telepon like '%$search%' or username like '%$search%') 
+        $data['data'] = $this->tbl_supplier->query("
+            select * from {$this->tbl_supplier->tbl} 
+            where (nama_supplier like '%$search%' or id like '%$search%' or
+            telepon like '%$search%' or alamat like '%$search%') 
             order by $column $dir 
             limit $start,$length");
-        $count = $this->tbl_user->countAll();
+        $count = $this->tbl_supplier->countAll();
         $data['recordsTotal'] = $count;
         $data['recordsFiltered'] = $count;
         $this->json->out($data);
@@ -120,24 +103,13 @@ class User extends Alien_Core_Controller
     public function update()
     {
         $request = json_decode(file_get_contents('php://input'), true);
-        if ($request['password'] == '' or $request['password'] == null) {
-            unset($request['password']);
-        } else {
-            $request['password'] = password_hash($request['password'], PASSWORD_BCRYPT);
-        }
-        $role = array(
-            'admin' => 0,
-            'gudang' => 1,
-            'kasir' => 2
-        );
-        $request['tipe_user'] = $role[$request['tipe_user']];
         try {
-            $this->tbl_user->update($request['id'], $request);
+            $this->tbl_supplier->update($request['id'], $request);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'update',
                 'id_user' => $this->getKey()->user->id,
-                'detail' => 'Mengubah data user, user.id: ' . $request['id']
+                'detail' => 'Mengubah data supplier, supplier.id: ' . $request['id']
             ]);
             $data = array();
             $data['status'] = 200;
@@ -155,12 +127,12 @@ class User extends Alien_Core_Controller
     {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->tbl_user->delete($request['id']);
+            $this->tbl_supplier->delete($request['id']);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'delete',
                 'id_user' => $this->getKey()->user->id,
-                'detail' => 'Menghapus data user, user.id: ' . $request['id']
+                'detail' => 'Menghapus data supplier, supplier.id: ' . $request['id']
             ]);
             $data = array();
             $data['status'] = 200;

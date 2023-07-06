@@ -56,7 +56,7 @@ class Login extends Alien_Core_Controller
                     if (!isset($sess->user)) $sess->user = new stdClass();
                     $sess->user = $bum;
                     $this->setKey($sess);
-                    $this->tb_log->create([
+                    $ud= $this->tb_log->create([
                         'waktu' => $this->timestamp(),
                         'aktivitas' => 'login',
                         'id_user' => $sess->user->id,
