@@ -1,7 +1,7 @@
 <script>
     let deleteList = [];
-    const requestUrl = '<?= base_url() ?>/admin/log/getLogByDate/' + $('#date').val();
-    const requestDeleteUrl = '<?= base_url() ?>/admin/log/delete';
+    const requestUrl = '<?= base_url() ?>/gudang/stok/getStokByBarang/' + $('#barang').val();
+    const requestDeleteUrl = '<?= base_url() ?>/gudang/stok/delete';
     const logTable = $('#table_log').DataTable({
         serverSide : true,
         dom: 'B<"mt-2"l>frti<"d-flex justify-content-end actions mb-2">p',
@@ -9,45 +9,33 @@
             url: requestUrl,
             dataSrc: 'data'
         },
-        rowCallback: function(row, data) {
-            if (data.aktivitas === 'delete') {
-                $(row).addClass('table-danger');
-            }
-            if (data.aktivitas === 'massive delete') {
-                $(row).addClass('table-dark');
-            }
-            if (data.aktivitas === 'update') {
-                $(row).addClass('table-warning');
-            }
-            if (data.aktivitas === 'create') {
-                $(row).addClass('table-success');
-            }
-            if (data.aktivitas === 'put') {
-                $(row).addClass('table-info');
-            }
-            if (data.aktivitas === 'logout') {
-                $(row).addClass('table-primary');
-            }
-        },
         columns: [{
                 data: 'id',
                 title: 'ID'
             },
             {
-                data: 'aktivitas',
-                title: 'Aktivitas'
+                data: 'barang',
+                title: 'Barang'
             },
             {
-                data: 'waktu',
-                title: 'Waktu'
+                data: 'jumlah_barang',
+                title: 'Jumlah Barang'
             },
             {
-                data: 'nama',
-                title: 'User'
+                data: 'stok',
+                title: 'Stok'
             },
             {
-                data: 'detail',
-                title: 'Detil'
+                data: 'tanggal_stok_masuk',
+                title: 'Tanggal Stok Masuk'
+            },
+            {
+                data: 'tanggal_stok_keluar',
+                title: 'Tanggal Stok Keluar'
+            },
+            {
+                data: 'expired_date',
+                title: 'Kadaluarsa'
             },
             {
                 defaultContent: '<input type="checkbox" class="form-check-input" onclick="addToDeleteList(this)">',
@@ -131,7 +119,7 @@
                     data : JSON.stringify({
                         data : deleteList,
                         type: type,
-                        date: $('#date').val()
+                        id_barang: $('#barang').val()
                     }),
                     contentType: 'application/json',
                     success: function(response) {
@@ -150,7 +138,7 @@
     }
 
     function reloadTable() {
-        const newUrl = '<?= base_url() ?>/admin/log/getLogByDate/' + $('#date').val();
+        const newUrl = '<?= base_url() ?>/gudang/stok/getStokByBarang/' + $('#barang').val();
         deleteList = [];
         console.log(logTable.ajax);
         logTable.ajax.url(newUrl);
@@ -161,5 +149,5 @@
         <button class="btn btn-dark me-1" style="background : black" onclick="deleteLogList('all')">Hapus semua</button>
         <button class="btn btn-danger" onclick="deleteLogList('list')">Hapus</button>`;
 
-    document.getElementById('date').addEventListener('change', reloadTable);
+    document.getElementById('barang').addEventListener('change', reloadTable);
 </script>

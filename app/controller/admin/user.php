@@ -56,11 +56,19 @@ class User extends Alien_Core_Controller
             $this->loadLayout("layout1.nonav", $data);
             $this->render();
         }
-    }
+    } 
 
     public function create()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_user, 'create', [
+            'tipe_user' => ['required'],
+            'nama' => ['required', 'max:50'],
+            'email' => ['required', 'max:50', 'min:6', 'unique'],
+            'telepon' => ['required', 'max:50', 'min:6', 'unique'],
+            'username' => ['required', 'max:50', 'min:3', 'unique'],
+            'password' => ['required', 'max:50', 'min:6']
+        ]);
         $request['password'] = password_hash($request['password'], PASSWORD_BCRYPT);
         $role = array(
             'admin' => 0,
@@ -78,6 +86,7 @@ class User extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {
@@ -120,6 +129,15 @@ class User extends Alien_Core_Controller
     public function update()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_user, 'update', [
+            'id' => ['required'],
+            'tipe_user' => ['required'],
+            'nama' => ['required', 'max:50'],
+            'email' => ['required', 'max:50', 'min:6', 'unique'],
+            'telepon' => ['required', 'max:50', 'min:6', 'unique'],
+            'username' => ['required', 'max:50', 'min:3', 'unique'],
+            'password' => ['max:50']
+        ]);
         if ($request['password'] == '' or $request['password'] == null) {
             unset($request['password']);
         } else {
@@ -141,6 +159,7 @@ class User extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {

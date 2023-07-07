@@ -83,6 +83,19 @@
             }),
             contentType: 'application/json',
             success: function(response) {
+                if (response.type) {
+                    Swal.fire(
+                        'Success',
+                        'Berhasil tambah data',
+                        'success'
+                    );
+                } else {
+                    Swal.fire(
+                        'Error',
+                        response.message,
+                        'error'
+                    );
+                }
                 readSupplier();
             },
             error: function(xhr, status, error) {
@@ -114,6 +127,19 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
+                    if (response.type) {
+                        Swal.fire(
+                            'Success',
+                            'Berhasil edit data',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            response.message,
+                            'error'
+                        );
+                    }
                     readSupplier();
                 },
                 error: function(xhr, status, error) {
@@ -141,6 +167,11 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
+                    Swal.fire(
+                        'Success',
+                        'Berhasil delete data',
+                        'success'
+                    );
                     readSupplier();
                 },
                 error: function(xhr, status, error) {

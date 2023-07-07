@@ -34,24 +34,21 @@
                 title: 'Satuan'
             },
             {
-                data: 'jumlah_barang',
-                title: 'Jumlah'
-            },
-            {
-                data: 'stok',
-                title: 'Stok Tersisa'
+                data: 'sisa_stok',
+                render: function(data, type, row) {
+                    return data.jumlah_barang + "/" + data.stok;
+                },
+                title: 'Stok'
             },
             {
                 data: 'harga_satuan',
-                title: 'Harga Per Unit (Rp)'
-            },
-            {
-                data: 'supplier',
-                title: 'Supplier'
-            },
-            {
-                data: 'tanggal_masuk',
-                title: 'Tanggal Masuk'
+                render: function(data, type, row) {
+                    return parseInt(data).toLocaleString('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                    });
+                },
+                title: 'Harga Per Unit'
             },
             {
                 data: 'expired_date',
@@ -129,9 +126,23 @@
             }),
             contentType: 'application/json',
             success: function(response) {
+                if (response.type) {
+                    Swal.fire(
+                        'Success',
+                        'Berhasil tambah data',
+                        'success'
+                    );
+                } else {
+                    Swal.fire(
+                        'Error',
+                        response.message,
+                        'error'
+                    );
+                }
                 readUser();
             },
             error: function(xhr, status, error) {
+                console.log(xhr);
                 Swal.fire(
                     'Error',
                     'An error occured: ' + error,
@@ -167,6 +178,19 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
+                    if (response.type) {
+                        Swal.fire(
+                            'Success',
+                            'Berhasil edit data',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            response.message,
+                            'error'
+                        );
+                    }
                     readUser();
                 },
                 error: function(xhr, status, error) {
@@ -194,6 +218,11 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
+                    Swal.fire(
+                        'Success',
+                        'Berhasil delete data',
+                        'success'
+                    );
                     readUser();
                 },
                 error: function(xhr, status, error) {
@@ -267,7 +296,7 @@
     function modalStok(context) {
         const row = context.parentNode.parentNode.childNodes;
         document.getElementById("submit2").setAttribute("onclick", "stock(" + row[0].innerHTML + ")");
-        $("#kadaluarsa").val(row[10].innerHTML);
+        $("#kadaluarsa").val(row[7].innerHTML);
     }
 
     function stock(id) {

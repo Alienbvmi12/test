@@ -72,6 +72,67 @@ class Alien_Core_Controller extends SENE_Controller
         }
     }
 
+    public function validate($data, $context, $model, $purpose,  $rules){
+        foreach($rules as $key => $value){
+            $param = $data[$key]; 
+            foreach($value as $rule){
+                $tmp = explode(':', $rule);
+                if($tmp[0] === 'required'){
+                    $space = 0;
+                    foreach(str_split((string)$param) as $u){
+                        if($u == ' ') $space++;
+                    }
+                    if(strlen((string)$param) === 0 OR strlen((string)$param) === $space){
+                        $data = array();
+                        $data['status'] = 200;
+                        $data['type'] = false;
+                        $data['message'] = $key.' wajib diisi';
+                        $context->json->out($data);
+                        die;
+                    }
+                }
+                if($tmp[0] === 'max'){
+                    if(strlen((string)$param) > $tmp[1]){
+                        $data = array();
+                        $data['status'] = 200;
+                        $data['type'] = false;
+                        $data['message'] = 'Panjang karakter "'.$key.'" tidak boleh lebih dari '.$tmp[1];
+                        $context->json->out($data);
+                        die;
+                    }
+                }
+                if($tmp[0] === 'min'){
+                    if(strlen((string)$param) < $tmp[1]){
+                        $data = array();
+                        $data['status'] = 200;
+                        $data['type'] = false;
+                        $data['message'] = 'Panjang karakter "'.$key.'" tidak boleh kurang dari '.$tmp[1];
+                        $context->json->out($data);
+                        die;
+                    }
+                }
+                if($tmp[0] === 'unique'){
+                    $sql = '';
+                    if($purpose === 'update'){
+                        $sql = "select count(*) as count from {$model->tbl} where $key='$param' and id!='$data[id]'";
+                    }
+                    else{
+                        $sql = "select count(*) as count from {$model->tbl} where $key='$param'";
+                    }
+                    $checkTbl = (int) $model->query($sql)[0]->count;
+                    if($checkTbl > 0){
+                        $data = array();
+                        $data['status'] = 200;
+                        $data['type'] = false;
+                        $data['message'] = $key.' tidak boleh sama dengan '.$key.' yang lain';
+                        $context->json->out($data);
+                        die;
+                    }
+                }
+            }
+        }
+    }
+
     public function index()
     {
     }

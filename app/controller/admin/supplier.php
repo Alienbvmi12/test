@@ -54,6 +54,11 @@ class Supplier extends Alien_Core_Controller
     public function create()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_supplier, 'create', [
+            'nama_supplier' => ['required', 'max:50'],
+            'alamat' => ['required'],
+            'telepon' => ['required', 'max:50']
+        ]);
         try {
             $create = $this->tbl_supplier->create($request);
             $this->tbl_log->create([
@@ -64,6 +69,7 @@ class Supplier extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {
@@ -103,6 +109,12 @@ class Supplier extends Alien_Core_Controller
     public function update()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_supplier, 'update', [
+            'id' => ['required'],
+            'nama_supplier' => ['required', 'max:50'],
+            'alamat' => ['required'],
+            'telepon' => ['required', 'max:50']
+        ]);
         try {
             $this->tbl_supplier->update($request['id'], $request);
             $this->tbl_log->create([
@@ -113,6 +125,7 @@ class Supplier extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {

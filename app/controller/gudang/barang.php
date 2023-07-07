@@ -117,6 +117,17 @@ class Barang extends Alien_Core_Controller
     public function create()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_barang, 'create', [
+            'kode_barang' => ['unique', 'required', 'max:50'],
+            'nama_barang' => ['required', 'max:255'],
+            'id_kategori' => ['required'],
+            'id_satuan' => ['required'],
+            'jumlah_barang' => ['required', 'max:11'],
+            'stok' => ['required', 'max:11'],
+            'harga_satuan' => ['required', 'max:20'],
+            'tanggal_masuk' => ['required'],
+            'expired_date' => ['required']
+        ]);
         try {
             $create = $this->tbl_barang->create($request);
             $this->tbl_log->create([
@@ -127,6 +138,7 @@ class Barang extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {
@@ -163,7 +175,7 @@ class Barang extends Alien_Core_Controller
                 {$this->tbl_barang->tbl}.stok as stok,
                 {$this->tbl_barang->tbl}.harga_satuan as harga_satuan,
                 {$this->tbl_barang->tbl}.tanggal_masuk as tanggal_masuk,
-                {$this->tbl_barang->tbl}.expired_date as expired_date 
+                {$this->tbl_barang->tbl}.expired_date as expired_date
             from 
                 {$this->tbl_barang->tbl},
                 {$this->tbl_kategori->tbl},
@@ -188,6 +200,12 @@ class Barang extends Alien_Core_Controller
                 ) 
             order by $column $dir 
             limit $start,$length");
+
+        foreach($data['data'] as $dat){
+            $dat->sisa_stok = array();
+            $dat->sisa_stok['jumlah_barang'] = $dat->jumlah_barang;
+            $dat->sisa_stok['stok'] = $dat->stok;
+        }
         $count = $this->tbl_barang->countAll();
         $data['recordsTotal'] = $count;
         $data['recordsFiltered'] = $count;
@@ -197,6 +215,18 @@ class Barang extends Alien_Core_Controller
     public function update()
     {
         $request = json_decode(file_get_contents('php://input'), true);
+        $this->validate($request, $this, $this->tbl_barang, 'update', [
+            'id' => ['required'],
+            'kode_barang' => ['unique', 'required', 'max:50'],
+            'nama_barang' => ['required', 'max:255'],
+            'id_kategori' => ['required'],
+            'id_satuan' => ['required'],
+            'jumlah_barang' => ['required', 'max:11'],
+            'stok' => ['required', 'max:11'],
+            'harga_satuan' => ['required', 'max:20'],
+            'tanggal_masuk' => ['required'],
+            'expired_date' => ['required']
+        ]);
         try {
             $this->tbl_barang->update($request['id'], $request);
             $this->tbl_log->create([
@@ -207,6 +237,7 @@ class Barang extends Alien_Core_Controller
             ]);
             $data = array();
             $data['status'] = 200;
+            $data['type'] = true;
             $data['message'] = 'Update Success';
             $this->json->out($data);
         } catch (Exception $e) {
@@ -250,6 +281,7 @@ class Barang extends Alien_Core_Controller
                 set 
                     jumlah_barang=$request[stok],
                     stok=stok + $request[stok],
+                    tanggal_masuk='".date('Y-m-d', time())."',
                     expired_date='$request[expired_date]'
                 where 
                     id='$request[id]'"
@@ -264,7 +296,8 @@ class Barang extends Alien_Core_Controller
                 'id_barang' => $barang->id,
                 'jumlah_barang' => $barang->jumlah_barang,
                 'stok' => $barang->stok,
-                'tanggal_stok' => date('Y-m-d', time()),
+                'tanggal_stok_masuk' => $barang->tanggal_masuk,
+                'tanggal_stok_keluar' => date('Y-m-d', time()),
                 'expired_date' => $barang->expired_date
             ]);
             $data = array();
