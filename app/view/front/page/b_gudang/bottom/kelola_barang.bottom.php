@@ -64,6 +64,14 @@
                 title: 'Action'
             }
         ],
+        rowCallback: function(row, data) {
+            let stockPercent = (parseInt(data.sisa_stok.stok) / parseInt(data.sisa_stok.jumlah_barang)) * 100;
+            if (stockPercent <= 0) {
+                $(row).addClass('table-danger');
+            } else if (stockPercent <= 10) {
+                $(row).addClass('table-warning');
+            }
+        },
         columnDefs: [{
             targets: 1,
             createdCell: function(cell, cellData, rowData, rowIndex, colIndex) {
@@ -254,10 +262,13 @@
         $('#nama_barang').val('');
         $('#kategori').val('');
         $('#satuan').val('');
+        $('#kategori-select').html('Pilih satuan');
+        $('#satuan-select').html('Pilih satuan');
         $('#jumlah_barang').val('');
         $('#stok').val('');
         $('#harga_satuan').val('');
         $('#supplier').val('');
+        $('#supplier-select').html('Pilih supplier');
         $('#tanggal_masuk').val('');
         $('#expired_date').val('');
 
@@ -274,11 +285,14 @@
                     $('#kode_barang').val(response.kode_barang);
                     $('#nama_barang').val(response.nama_barang);
                     $('#kategori').val(response.id_kategori);
+                    $('#kategori-select').html(getHtml(document.getElementById("kategori-select"), response.id_kategori));
                     $('#satuan').val(response.id_satuan);
+                    $('#satuan-select').html(getHtml(document.getElementById("satuan-select"), response.id_satuan));
                     $('#jumlah_barang').val(response.jumlah_barang);
                     $('#stok').val(response.stok);
                     $('#harga_satuan').val(response.harga_satuan);
                     $('#supplier').val(response.id_supplier);
+                    $('#supplier-select').html(getHtml(document.getElementById("supplier-select"), response.id_supplier));
                     $('#tanggal_masuk').val(response.tanggal_masuk);
                     $('#expired_date').val(response.expired_date);
                 },
@@ -297,6 +311,18 @@
         const row = context.parentNode.parentNode.childNodes;
         document.getElementById("submit2").setAttribute("onclick", "stock(" + row[0].innerHTML + ")");
         $("#kadaluarsa").val(row[7].innerHTML);
+    }
+
+    function getHtml(context, value) { //Untuk mengambil nama item dropdown berdasarkan id data
+        const list = context.parentNode.childNodes[3];
+        for (var i = 2; i < list.childNodes.length; i++) {
+            if (list.childNodes[i].nodeName !== "#text") {
+                if (parseInt(list.childNodes[i].childNodes[0].getAttribute("data-select")) == parseInt(value)) {
+                    console.log(value);
+                    return list.childNodes[i].childNodes[0].innerHTML;
+                }
+            }
+        }
     }
 
     function stock(id) {
@@ -349,6 +375,23 @@
     function userDetail(ctx) {
         const id = ctx.parentNode.parentNode.childNodes[0].innerHTML;
         window.location.href = userDetailUrl + "/" + id;
+    }
+
+    function filterFunction(context) {
+        var input, filter, ul, li, a, i;
+        input = context;
+        filter = input.value.toUpperCase();
+        div = context.parentNode.parentNode.parentNode;
+        li = div.getElementsByTagName("li");
+        a = li;
+        for (i = 0; i < a.length; i++) {
+            txtValue = li[i].childNodes[0].innerText || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
     }
 
     document.getElementsByClassName('actions')[0].innerHTML += `

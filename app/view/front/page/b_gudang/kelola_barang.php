@@ -3,6 +3,12 @@
         <div class="col-md-12 col-sm-12">
             <div class="card rounded">
                 <div class="card-body" style="overflow : auto">
+                    *Keterangan :
+                    <ul>
+                        <li>Kuning = Stok rendah</li>
+                        <li>Merah = Stok habis</li>
+                        <li>Putih = Stok aman</li>
+                    </ul>
                     <table id="table_log" class="table table-bordered align-items-center mb-0;">
                         <thead class="table-info custh"></thead>
                         <tbody></tbody>
@@ -55,27 +61,39 @@
                                 <label>Nama Barang</label>
                                 <input class="form-control mb-3" type="search" id="nama_barang" name="nama_barang" maxlength="50" required>
                                 <label for="">Kategori</label>
-                                <select class="form-control bg-white mb-3" id="kategori" name="satuan" required>
-                                    <option disabled selected hidden value="">Pilih kategori</option>
-                                    <?php
-                                    foreach ($kategori as $kat) {
-                                    ?>
-                                        <option value="<?= $kat->id ?>"><?= $kat->nama_kategori ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
+                                <input type="hidden" id="kategori">
+                                <div class="dropdown mb-3">
+                                    <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="kategori-select" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Pilih Kategori
+                                    </button>
+                                    <ul class="dropdown-menu shadow" aria-labelledby="kategori-select" style="width : 100%;">
+                                        <div class="dropdown-item"><input class="form-control" type="search" oninput="filterFunction(this)" placeholder="search"></div>
+                                        <?php
+                                        foreach ($kategori as $kat) {
+                                        ?>
+                                            <li><a class="dropdown-item" data-select="<?= $kat->id ?>" onclick="$('#kategori').val(<?= $kat->id ?>); $('#kategori-select').html('<?= $kat->nama_kategori ?>')"><?= $kat->nama_kategori ?></a></li>
+                                        <?php
+                                        }
+                                        ?>
+                                    </ul>
+                                </div>
                                 <label for="">Satuan</label>
-                                <select class="form-control bg-white mb-3" id="satuan" name="satuan" required>
-                                    <option disabled selected hidden value="">Pilih satuan</option>
-                                    <?php
-                                    foreach ($satuan as $sat) {
-                                    ?>
-                                        <option value="<?= $sat->id ?>"><?= $sat->nama_satuan ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
+                                <input type="hidden" id="satuan">
+                                <div class="dropdown mb-3">
+                                    <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="satuan-select" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Pilih Satuan
+                                    </button>
+                                    <ul class="dropdown-menu shadow" aria-labelledby="satuan-select" style="width : 100%;">
+                                        <div class="dropdown-item"><input class="form-control" type="search" oninput="filterFunction(this)" placeholder="search"></div>
+                                        <?php
+                                        foreach ($satuan as $sat) {
+                                        ?>
+                                            <li><a class="dropdown-item" data-select="<?= $sat->id ?>" onclick="$('#satuan').val(<?= $sat->id ?>); $('#satuan-select').html('<?= $sat->nama_satuan ?>')"><?= $sat->nama_satuan ?></a></li>
+                                        <?php
+                                        }
+                                        ?>
+                                    </ul>
+                                </div>
                                 <label>Jumlah</label>
                                 <input class="form-control mb-3" type="number" id="jumlah_barang" name="jumlah_barang" min="1" required>
 
@@ -86,15 +104,23 @@
                             <label>Harga Satuan</label>
                             <input class="form-control mb-3" type="number" id="harga_satuan" name="harga_satuan" min="1" required>
                             <label for="">Supplier</label>
-                            <select class="form-control bg-white mb-3" id="supplier" name="supplier" required>
-                                <option disabled selected hidden value="">Pilih Supplier</option>
-                                <?php
-                                foreach ($supplier as $sup) {
-                                ?>
-                                    <option value="<?= $sup->id ?>"><?= $sup->nama_supplier ?></option>
-                                <?php
-                                }
-                                ?>
+
+                            <input type="hidden" id="supplier">
+                            <div class="dropdown mb-3">
+                                <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="supplier-select" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Pilih supplier
+                                </button>
+                                <ul class="dropdown-menu shadow" aria-labelledby="supplier-select" style="width : 100%;">
+                                    <div class="dropdown-item"><input class="form-control" type="search" oninput="filterFunction(this)" placeholder="search"></div>
+                                    <?php
+                                    foreach ($supplier as $sup) {
+                                    ?>
+                                        <li><a class="dropdown-item" data-select="<?= $sup->id ?>" onclick="$('#supplier').val(<?= $sup->id ?>); $('#supplier-select').html('<?= $sup->nama_supplier ?>')"><?= $sup->nama_supplier ?></a></li>
+                                    <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
                             </select>
                             <label>Tanggal Masuk</label>
                             <input class="form-control mb-3" type="date" id="tanggal_masuk" name="tanggal_masuk" required>

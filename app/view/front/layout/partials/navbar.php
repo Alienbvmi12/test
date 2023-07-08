@@ -108,7 +108,7 @@
       [
         'title' => 'Kelola Laporan',
         'Icon' => 'mdi-chart-bar',
-        'url' => base_url('/admin/laporan')
+        'url' => base_url('/admin/laporani')
       ],
       [
         'title' => 'Kelola Supplier',
