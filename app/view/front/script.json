@@ -49,6 +49,9 @@
             "src": "{{base_url}}/public/assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"
         },
         {
+            "src": "{{base_url}}/public/assets/libs/toastr/build/toastr.min.js"
+        },
+        {
             "src": "{{base_url}}/public/dist/js/pages/chart/chart-page-init.js"
         },
         {

@@ -47,6 +47,12 @@ class Alien_Core_Model extends SENE_Model{
     $this->db->where($col,$id);
     return $this->db->delete($this->tbl);
   }
+  public function moveToTrash($id, $col = "id"){
+    return $this->db->query("update {$this->tbl} set deleted_at='".date("Y-m-d", time())."' where $col='$id'");
+  }
+  public function recover($id, $col = "id"){
+    return $this->db->query("update {$this->tbl} set deleted_at='0000-00-00' where $col='$id'");
+  }
   public function getByEmail($email){
     $this->db->where('email',$email);
     return $this->db->get_first();

@@ -98,6 +98,7 @@ class Supplier extends Alien_Core_Controller
             select * from {$this->tbl_supplier->tbl} 
             where (nama_supplier like '%$search%' or id like '%$search%' or
             telepon like '%$search%' or alamat like '%$search%') 
+            and deleted_at is null 
             order by $column $dir 
             limit $start,$length");
         $count = $this->tbl_supplier->countAll();
@@ -140,7 +141,7 @@ class Supplier extends Alien_Core_Controller
     {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->tbl_supplier->delete($request['id']);
+            $this->tbl_supplier->moveToTrash($request['id']);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'delete',

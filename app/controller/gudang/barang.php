@@ -198,6 +198,7 @@ class Barang extends Alien_Core_Controller
                     {$this->tbl_barang->tbl}.tanggal_masuk like '%$search%' or 
                     {$this->tbl_barang->tbl}.expired_date like '%$search%'
                 ) 
+                and deleted_at is null 
             order by $column $dir 
             limit $start,$length");
 
@@ -252,7 +253,31 @@ class Barang extends Alien_Core_Controller
     {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->tbl_barang->delete($request['id']);
+            $this->tbl_log_stok->query("delete from {$this->tbl_log_stok->tbl} where id_barang='$request[id]'");
+            $this->tbl_barang->moveToTrash($request['id']);
+            $this->tbl_log->create([
+                'waktu' => $this->timestamp(),
+                'aktivitas' => 'delete',
+                'id_user' => $this->getKey()->user->id,
+                'detail' => 'Menghapus data barang, barang.id: ' . $request['id']
+            ]);
+            $data = array();
+            $data['status'] = 200;
+            $data['message'] = 'Delete Success';
+            $this->json->out($data);
+        } catch (Exception $e) {
+            $data['status'] = 500;
+            $data['message'] = 'Error';
+            $data['exception'] = $e;
+            $this->json->out($data);
+        }
+    }
+
+    public function deleteOutOfStock(){
+        $request = json_decode(file_get_contents('php://input'), true);
+        try {
+            $this->tbl_log_stok->query("delete from {$this->tbl_log_stok->tbl} where id_barang='$request[id]'");
+            $this->tbl_barang->delete($request['stok']);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'delete',

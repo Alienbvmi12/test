@@ -11,6 +11,7 @@
             url: requestReadUrl,
             dataSrc: 'data'
         },
+        order: [[0, 'desc']],
         columns: [{
                 data: 'id',
                 title: 'ID'
@@ -84,26 +85,14 @@
             contentType: 'application/json',
             success: function(response) {
                 if (response.type) {
-                    Swal.fire(
-                        'Success',
-                        'Berhasil tambah data',
-                        'success'
-                    );
+                    toastr.success("<b>Berhasil : </b>tambah data!!");
                 } else {
-                    Swal.fire(
-                        'Error',
-                        response.message,
-                        'error'
-                    );
+                    toastr.error("<b>Galat : </b>" + response.message);
                 }
                 readSupplier();
             },
             error: function(xhr, status, error) {
-                Swal.fire(
-                    'Error',
-                    'An error occured: ' + error,
-                    'error'
-                );
+                toastr.error("<b>An error occured : </b>"+error);
             }
         });
     }
@@ -128,26 +117,14 @@
                 contentType: 'application/json',
                 success: function(response) {
                     if (response.type) {
-                        Swal.fire(
-                            'Success',
-                            'Berhasil edit data',
-                            'success'
-                        );
+                        toastr.success("<b>Berhasil : </b>edit data!!");
                     } else {
-                        Swal.fire(
-                            'Error',
-                            response.message,
-                            'error'
-                        );
+                        toastr.error("<b>Galat : </b>"+response.message);
                     }
                     readSupplier();
                 },
                 error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Error',
-                        'An error occured: ' + error,
-                        'error'
-                    );
+                    toastr.error("<b>An error occured : </b>"+error);
                 }
             });
         });
@@ -167,19 +144,11 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
-                    Swal.fire(
-                        'Success',
-                        'Berhasil delete data',
-                        'success'
-                    );
+                    toastr.success("<b>Berhasil : </b>hapus data!!");
                     readSupplier();
                 },
                 error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Error',
-                        'An error occured: ' + error,
-                        'error'
-                    );
+                    toastr.error("<b>An error occured : </b>"+error);
                 }
             });
         });

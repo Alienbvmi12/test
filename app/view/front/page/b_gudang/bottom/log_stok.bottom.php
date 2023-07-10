@@ -9,6 +9,7 @@
             url: requestUrl,
             dataSrc: 'data'
         },
+        order: [[0, 'desc']],
         columns: [{
                 data: 'id',
                 title: 'ID'
@@ -144,10 +145,6 @@
         logTable.ajax.url(newUrl);
         logTable.ajax.reload(null, false);
     }
-
-    document.getElementsByClassName('actions')[0].innerHTML += `
-        <button class="btn btn-dark me-1" style="background : black" onclick="deleteLogList('all')">Hapus semua</button>
-        <button class="btn btn-danger" onclick="deleteLogList('list')">Hapus</button>`;
 
     document.getElementById('barang').addEventListener('change', reloadTable);
 </script>

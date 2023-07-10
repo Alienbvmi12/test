@@ -56,7 +56,7 @@ class User extends Alien_Core_Controller
             $this->loadLayout("layout1.nonav", $data);
             $this->render();
         }
-    } 
+    }
 
     public function create()
     {
@@ -118,6 +118,7 @@ class User extends Alien_Core_Controller
             where (tipe_user like '%$search%' or id like '%$search%' or
             nama like '%$search%' or email like '%$search%' or
             telepon like '%$search%' or username like '%$search%') 
+            and deleted_at is null 
             order by $column $dir 
             limit $start,$length");
         $count = $this->tbl_user->countAll();
@@ -169,12 +170,56 @@ class User extends Alien_Core_Controller
             $this->json->out($data);
         }
     }
+    public function gantiPassword()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        try {
+            if ($request['type'] === "ganti") {
+                if ($request['password_baru'] != $request['konfirmasi_password_baru']) {
+                    $data['status'] = 200;
+                    $data['type'] = false;
+                    $data['message'] = 'Password tidak sama';
+                } else {
+                    $this->tbl_user->update($request['id'], [
+                        'password' => password_hash($request['password_baru'], PASSWORD_BCRYPT)
+                    ]);
+                    $this->tbl_log->create([
+                        'waktu' => $this->timestamp(),
+                        'aktivitas' => 'update',
+                        'id_user' => $this->getKey()->user->id,
+                        'detail' => 'Mengganti password, user.id: ' . $request['id']
+                    ]);
+                }
+            } elseif ($request['type'] == "reset") {
+                $this->tbl_user->update($request['id'], [
+                    'password' => password_hash($request['password_baru'], PASSWORD_BCRYPT)
+                ]);
+                $this->tbl_log->create([
+                    'waktu' => $this->timestamp(),
+                    'aktivitas' => 'update',
+                    'id_user' => $this->getKey()->user->id,
+                    'detail' => 'Mengganti password, user.id: ' . $request['id']
+                ]);
+            }
+            $data = array();
+            $data['status'] = 200;
+            $data['type'] = true;
+            $data['message'] = 'Update Success';
+            $this->json->out($data);
+        } catch (Exception $e) {
+            $data['status'] = 500;
+            $data['message'] = 'Error';
+            $data['exception'] = $e;
+            $this->json->out($data);
+        }
+    }
 
     public function delete()
     {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->tbl_user->delete($request['id']);
+            $this->tbl_log->query("delete from {$this->tbl_log->tbl} where id_user='$request[id]'");
+            $this->tbl_user->moveToTrash($request['id']);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'delete',

@@ -39,7 +39,11 @@
         },
         {
             "rel" : "stylesheet",
+            "href" : "{{base_url}}/public/assets/libs/toastr/build/toastr.min.css"
+        },
+        {
+            "rel" : "stylesheet",
             "href" : "https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css"
-        }    
+        } 
     ]
 }

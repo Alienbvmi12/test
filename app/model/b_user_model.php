@@ -7,7 +7,7 @@ class B_User_Model extends Alien_Core_Model
     parent::__construct();
   }
   public function getByCredential($cred){
-    return $this->db->query("select * from user where username='$cred' or email='$cred' or telepon='$cred'");
+    return $this->db->query("select * from user where username='$cred' or email='$cred' or telepon='$cred' and deleted_at is null");
   }
 }
 

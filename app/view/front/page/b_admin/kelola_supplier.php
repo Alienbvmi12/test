@@ -3,6 +3,9 @@
         <div class="col-md-12 col-sm-12">
             <div class="card rounded">
                 <div class="card-body">
+                    *Catatan: Sebelum menghapus supplier, pastikan tidak ada barang dengan nama supplier tersebut
+                    <br>
+                    <br>
                     <table id="table_log" class="table table-bordered align-items-center mb-0" width="100%">
                         <thead class="table-info custh"></thead>
                         <tbody></tbody>

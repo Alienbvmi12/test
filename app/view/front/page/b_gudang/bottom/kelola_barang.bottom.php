@@ -13,6 +13,7 @@
             url: requestReadUrl,
             dataSrc: 'data'
         },
+        order: [[0, 'desc']],
         columns: [{
                 data: 'id',
                 title: 'ID'
@@ -135,17 +136,9 @@
             contentType: 'application/json',
             success: function(response) {
                 if (response.type) {
-                    Swal.fire(
-                        'Success',
-                        'Berhasil tambah data',
-                        'success'
-                    );
+                    toastr.success("<b>Berhasil</b> tambah data!!");
                 } else {
-                    Swal.fire(
-                        'Error',
-                        response.message,
-                        'error'
-                    );
+                    toastr.error("<b>Galat : </b>" + response.message);
                 }
                 readUser();
             },
@@ -187,17 +180,9 @@
                 contentType: 'application/json',
                 success: function(response) {
                     if (response.type) {
-                        Swal.fire(
-                            'Success',
-                            'Berhasil edit data',
-                            'success'
-                        );
+                        toastr.success("<b>Berhasil</b> edit data!!");
                     } else {
-                        Swal.fire(
-                            'Error',
-                            response.message,
-                            'error'
-                        );
+                        toastr.error("<b>Galat : </b>" + response.message);
                     }
                     readUser();
                 },
@@ -226,11 +211,7 @@
                 }),
                 contentType: 'application/json',
                 success: function(response) {
-                    Swal.fire(
-                        'Success',
-                        'Berhasil delete data',
-                        'success'
-                    );
+                    toastr.success("<b>Berhasil</b> hapus data!!");
                     readUser();
                 },
                 error: function(xhr, status, error) {
@@ -262,7 +243,7 @@
         $('#nama_barang').val('');
         $('#kategori').val('');
         $('#satuan').val('');
-        $('#kategori-select').html('Pilih satuan');
+        $('#kategori-select').html('Pilih kategori');
         $('#satuan-select').html('Pilih satuan');
         $('#jumlah_barang').val('');
         $('#stok').val('');
@@ -337,6 +318,11 @@
             }),
             contentType: 'application/json',
             success: function(response) {
+                Swal.fire(
+                    'Success',
+                    'Berhasil tambah stok',
+                    'success'
+                );
                 readUser();
             },
             error: function(xhr, status, error) {
