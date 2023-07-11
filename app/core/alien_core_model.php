@@ -15,7 +15,23 @@ class Alien_Core_Model extends SENE_Model{
     $this->db->from($this->tbl,$this->tbl_as);
     return $this->db->get();
   }
+  public function getAllOnly($cond=true){
+    if($cond){
+      $cond='is null';
+    }
+    else{
+      $cond='is not null';
+    }
+    return $this->query("select * from {$this->tbl} where deleted_at $cond");
+  }
   public function countAll(){
+    $this->db->select_as('COUNT(*)','total',0);
+    $this->db->from($this->tbl,$this->tbl_as);
+    $d = $this->db->get_first();
+    if(isset($d->total)) return $d->total;
+    return 0;
+  }
+  public function countAllOnly(){
     $this->db->select_as('COUNT(*)','total',0);
     $this->db->from($this->tbl,$this->tbl_as);
     $d = $this->db->get_first();

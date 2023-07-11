@@ -3,13 +3,15 @@
     const requestUrl = '<?= base_url() ?>/gudang/stok/getStokByBarang/' + $('#barang').val();
     const requestDeleteUrl = '<?= base_url() ?>/gudang/stok/delete';
     const logTable = $('#table_log').DataTable({
-        serverSide : true,
+        serverSide: true,
         dom: 'B<"mt-2"l>frti<"d-flex justify-content-end actions mb-2">p',
         ajax: {
             url: requestUrl,
             dataSrc: 'data'
         },
-        order: [[0, 'desc']],
+        order: [
+            [0, 'desc']
+        ],
         columns: [{
                 data: 'id',
                 title: 'ID'
@@ -19,28 +21,41 @@
                 title: 'Barang'
             },
             {
-                data: 'jumlah_barang',
-                title: 'Jumlah Barang'
-            },
-            {
                 data: 'stok',
                 title: 'Stok'
             },
             {
-                data: 'tanggal_stok_masuk',
-                title: 'Tanggal Stok Masuk'
+                data: 'harga_beli',
+                render: function(data, type, row) {
+                    return parseInt(data).toLocaleString('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                    });
+                },
+                title: 'Harga Beli Per Unit'
             },
             {
-                data: 'tanggal_stok_keluar',
-                title: 'Tanggal Stok Keluar'
+                data: 'status',
+                render: function(data, type, row) {
+                    if(data == 0){
+                        return "Stok Kosong"
+                    }
+                    else if(data == 1){
+                        return "<i class=\"bg-success text-white p-1\">Di Gudang</i>"
+                    }
+                    else if(data == 2){
+                        return "<i class=\"bg-danger text-white p-1\">Di Display</i>"
+                    }
+                },
+                title: 'Status'
             },
             {
                 data: 'expired_date',
                 title: 'Kadaluarsa'
             },
             {
-                defaultContent: '<input type="checkbox" class="form-check-input" onclick="addToDeleteList(this)">',
-                title: 'Select'
+                data: 'created_at',
+                title: 'Ditambahkan pada'
             }
         ],
         buttons: [{
@@ -117,8 +132,8 @@
                     url: requestDeleteUrl,
                     type: 'DELETE',
                     dataType: 'json',
-                    data : JSON.stringify({
-                        data : deleteList,
+                    data: JSON.stringify({
+                        data: deleteList,
                         type: type,
                         id_barang: $('#barang').val()
                     }),

@@ -25,6 +25,7 @@ class Home extends Alien_Core_Controller
         'Kasir'
       ];
 
+      $data['active'] = 'selected';
       $data['sess'] = $this->getKey();
       $data['hello'] = "Welcome " . $role[$data['sess']->user->tipe_user] . " " . $data['sess']->user->nama;
 

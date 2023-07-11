@@ -99,28 +99,7 @@
   </nav>
   <?php
   $menu = [
-    [ //admin
-      [
-        'title' => 'Kelola User',
-        'Icon' => 'mdi-account-card-details',
-        'url' => base_url('/admin/user')
-      ],
-      [
-        'title' => 'Kelola Laporan',
-        'Icon' => 'mdi-chart-bar',
-        'url' => base_url('/admin/laporani')
-      ],
-      [
-        'title' => 'Kelola Supplier',
-        'Icon' => 'mdi-clipboard-flow',
-        'url' => base_url('/admin/supplier')
-      ],
-      [
-        'title' => 'Histori Log',
-        'Icon' => 'mdi-clock',
-        'url' => base_url('/admin/log')
-      ],
-    ],
+
     [ //gudang
       [
         'title' => 'Kelola Barang',
@@ -155,21 +134,66 @@
     <!-- Sidebar navigation-->
     <nav class="sidebar-nav">
       <ul id="sidebarnav" class="pt-4">
-        <li class="sidebar-item">
+        <li class="sidebar-item <?= $active ?? ''?>">
           <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url() ?>" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a>
         </li>
         <?php
-        foreach ($menu[$sess->user->tipe_user] as $item) {
+        if (((int)$sess->user->tipe_user) === 0) {
         ?>
           <li class="sidebar-item">
-            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= $item['url'] ?>" aria-expanded="false"><i class="mdi <?= $item['Icon'] ?>"></i><span class="hide-menu"><?= $item['title'] ?></span></a>
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/user') ?>" aria-expanded="false"><i class="mdi mdi-account-card-details"></i><span class="hide-menu">Kelola User</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/laporan') ?>" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">Kelola Laporan</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/supplier') ?>" aria-expanded="false"><i class="mdi mdi-clipboard-flow"></i><span class="hide-menu">Kelola Supplier</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/log') ?>" aria-expanded="false"><i class="mdi mdi-clock"></i><span class="hide-menu">Histori log</span></a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/log') ?>" aria-expanded="false"><i class="mdi mdi-clock"></i><span class="hide-menu">Histori log</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/auth/login/logout') ?>" aria-expanded="false"><i class="mdi mdi-export"></i><span class="hide-menu">Logout</span></a>
           </li>
         <?php
         }
         ?>
-        <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/auth/login/logout') ?>" aria-expanded="false"><i class="mdi mdi-export"></i><span class="hide-menu">Logout</span></a>
-        </li>
+        <?php
+        if (((int)$sess->user->tipe_user) === 1) {
+        ?>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/gudang/barang') ?>" aria-expanded="false"><i class="mdi mdi-cube-outline"></i><span class="hide-menu">Kelola Barang</span></a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-clipboard-text"></i><span class="hide-menu">Kelola Stok</span></a>
+            <ul aria-expanded="false" class="collapse first-level">
+              <li class="sidebar-item">
+                <a href="<?= base_url('/gudang/stok') ?>" class="sidebar-link"><i class="mdi mdi-dropbox"></i><span class="hide-menu"> Stok Barang </span></a>
+              </li>
+              <li class="sidebar-item">
+                <a href="<?= base_url('/gudang/stok/stok_masuk') ?>" class="sidebar-link"><i class="mdi mdi-inbox-arrow-down"></i><span class="hide-menu"> Histori Stok Masuk </span></a>
+              </li>
+              <li class="sidebar-item">
+                <a href="<?= base_url('/gudang/stok/stok_keluar') ?>" class="sidebar-link"><i class="mdi mdi-inbox-arrow-up"></i><span class="hide-menu"> Histori Stok Keluar </span></a>
+              </li>
+            </ul>
+          </li>
+        <?php
+        }
+        ?>
+        <?php
+        if (((int)$sess->user->tipe_user) === 2) {
+        ?>
+          <li class="sidebar-item">
+            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= base_url('/admin/user') ?>" aria-expanded="false"><i class="mdi mdi-account-card-details"></i><span class="hide-menu">Kelola User</span></a>
+          </li>
+        <?php
+        }
+        ?>
 
       </ul>
     </nav>

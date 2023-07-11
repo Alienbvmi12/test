@@ -11,7 +11,7 @@ class Barang extends Alien_Core_Controller
         $this->load('c_log_model', 'tbl_log');
         $this->load('c_kategori_model', 'tbl_kategori');
         $this->load('c_satuan_model', 'tbl_satuan');
-        $this->load('c_log_stok_model', 'tbl_log_stok');
+        $this->load('c_stok_model', 'tbl_stok');
         $this->lib("sene_json_engine", "json");
     }
     public function index()
@@ -52,20 +52,20 @@ class Barang extends Alien_Core_Controller
             $data['data'] =  $this->tbl_barang->query("
             select 
                 {$this->tbl_barang->tbl}.id as id,
-                {$this->tbl_kategori->tbl}.nama_kategori as kategori,
-                {$this->tbl_satuan->tbl}.nama_satuan as satuan,
+                {$this->tbl_kategori->tbl}.id as id_kategori,
+                {$this->tbl_satuan->tbl}.id as id_satuan,
                 {$this->tbl_barang->tbl}.kode_barang as kode_barang,
                 {$this->tbl_barang->tbl}.nama_barang as nama_barang,
                 {$this->tbl_barang->tbl}.jumlah_barang as jumlah_barang,
                 {$this->tbl_barang->tbl}.stok as stok,
                 {$this->tbl_barang->tbl}.harga_satuan as harga_satuan,
-                {$this->tbl_supplier->tbl}.nama_supplier as supplier,
+                {$this->tbl_supplier->tbl}.id as id_supplier,
                 {$this->tbl_barang->tbl}.tanggal_masuk as tanggal_masuk,
                 {$this->tbl_barang->tbl}.expired_date as expired_date 
             from 
                 {$this->tbl_barang->tbl},
                 {$this->tbl_kategori->tbl},
-                {$this->tbl_satuan->tbl} ,
+                {$this->tbl_satuan->tbl},
                 {$this->tbl_supplier->tbl}
             where 
                 {$this->tbl_barang->tbl}.id_kategori = {$this->tbl_kategori->tbl}.id and 
@@ -82,33 +82,28 @@ class Barang extends Alien_Core_Controller
         }
     }
 
-    public function dataForEdit($id){
+    public function dataForEdit($id)
+    {
         $data = $this->tbl_barang->query("
         select 
-            {$this->tbl_barang->tbl}.id as id,
-            {$this->tbl_kategori->tbl}.nama_kategori as kategori,
-            {$this->tbl_kategori->tbl}.id as id_kategori,
-            {$this->tbl_satuan->tbl}.nama_satuan as satuan,
-            {$this->tbl_satuan->tbl}.id as id_satuan,
-            {$this->tbl_barang->tbl}.kode_barang as kode_barang,
-            {$this->tbl_barang->tbl}.nama_barang as nama_barang,
-            {$this->tbl_barang->tbl}.jumlah_barang as jumlah_barang,
-            {$this->tbl_barang->tbl}.stok as stok,
-            {$this->tbl_barang->tbl}.harga_satuan as harga_satuan,
-            {$this->tbl_supplier->tbl}.nama_supplier as supplier,
-            {$this->tbl_supplier->tbl}.id as id_supplier,
-            {$this->tbl_barang->tbl}.tanggal_masuk as tanggal_masuk,
-            {$this->tbl_barang->tbl}.expired_date as expired_date 
-        from 
-            {$this->tbl_barang->tbl},
-            {$this->tbl_kategori->tbl},
-            {$this->tbl_satuan->tbl} ,
-            {$this->tbl_supplier->tbl}
-        where 
-            {$this->tbl_barang->tbl}.id_kategori = {$this->tbl_kategori->tbl}.id and 
-            {$this->tbl_barang->tbl}.id_satuan = {$this->tbl_satuan->tbl}.id and 
-            {$this->tbl_barang->tbl}.id_supplier = {$this->tbl_supplier->tbl}.id and 
-            {$this->tbl_barang->tbl}.id = '$id'
+                {$this->tbl_barang->tbl}.id as id,
+                {$this->tbl_kategori->tbl}.id as id_kategori,
+                {$this->tbl_satuan->tbl}.id as id_satuan,
+                {$this->tbl_supplier->tbl}.id as id_supplier,
+                {$this->tbl_barang->tbl}.kode_barang as kode_barang,
+                {$this->tbl_barang->tbl}.nama_barang as nama_barang,
+                {$this->tbl_barang->tbl}.harga_jual_satuan as harga_jual_satuan
+            from 
+                {$this->tbl_barang->tbl},
+                {$this->tbl_kategori->tbl},
+                {$this->tbl_satuan->tbl},
+                {$this->tbl_supplier->tbl} 
+            where 
+                {$this->tbl_barang->tbl}.id_kategori = {$this->tbl_kategori->tbl}.id and 
+                {$this->tbl_barang->tbl}.id_satuan = {$this->tbl_satuan->tbl}.id and 
+                {$this->tbl_barang->tbl}.id_supplier = {$this->tbl_supplier->tbl}.id and 
+                {$this->tbl_barang->tbl}.id = '$id' and 
+                {$this->tbl_barang->tbl}.deleted_at is null 
         ")[0];
 
         $this->json->out($data);
@@ -122,11 +117,8 @@ class Barang extends Alien_Core_Controller
             'nama_barang' => ['required', 'max:255'],
             'id_kategori' => ['required'],
             'id_satuan' => ['required'],
-            'jumlah_barang' => ['required', 'max:11'],
-            'stok' => ['required', 'max:11'],
-            'harga_satuan' => ['required', 'max:20'],
-            'tanggal_masuk' => ['required'],
-            'expired_date' => ['required']
+            'id_supplier' => ['required'],
+            'harga_jual_satuan' => ['required', 'max:20'],
         ]);
         try {
             $create = $this->tbl_barang->create($request);
@@ -158,55 +150,65 @@ class Barang extends Alien_Core_Controller
         $order = $_GET['order'];
         $start = ((int)$_GET['start']);
         $length = $_GET['length'];
-        $column = $this->tbl_barang->getColumnName($_GET['order'][0]['column'])[0]->COLUMN_NAME;
+        $collist = [
+            'id_barang',
+            'kode_barang',
+            'nama_barang',
+            'kategori',
+            'satuan',
+            'stok',
+            'harga_jual_satuan',
+            'supplier',
+            'id_barang'
+        ];
+        $column = $collist[$_GET['order'][0]['column']];
         $dir = $_GET['order'][0]['dir'];
         if ($dir === 'asc') {
             $dir = '';
         }
         $data['data'] = $this->tbl_barang->query("
             select 
-                {$this->tbl_barang->tbl}.id as id,
+                {$this->tbl_barang->tbl}.id as id_barang,
                 {$this->tbl_kategori->tbl}.nama_kategori as kategori,
                 {$this->tbl_satuan->tbl}.nama_satuan as satuan,
                 {$this->tbl_supplier->tbl}.nama_supplier as supplier,
                 {$this->tbl_barang->tbl}.kode_barang as kode_barang,
                 {$this->tbl_barang->tbl}.nama_barang as nama_barang,
-                {$this->tbl_barang->tbl}.jumlah_barang as jumlah_barang,
-                {$this->tbl_barang->tbl}.stok as stok,
-                {$this->tbl_barang->tbl}.harga_satuan as harga_satuan,
-                {$this->tbl_barang->tbl}.tanggal_masuk as tanggal_masuk,
-                {$this->tbl_barang->tbl}.expired_date as expired_date
+                sum({$this->tbl_stok->tbl}.stok) as stok,
+                {$this->tbl_barang->tbl}.harga_jual_satuan as harga_jual_satuan
             from 
-                {$this->tbl_barang->tbl},
-                {$this->tbl_kategori->tbl},
-                {$this->tbl_satuan->tbl},
+                {$this->tbl_barang->tbl} 
+            left join 
+                {$this->tbl_kategori->tbl} 
+            on
+                {$this->tbl_kategori->tbl}.id={$this->tbl_barang->tbl}.id_kategori 
+            left join 
+                {$this->tbl_satuan->tbl}
+            on
+                {$this->tbl_satuan->tbl}.id={$this->tbl_barang->tbl}.id_satuan 
+            left join 
                 {$this->tbl_supplier->tbl}
+            on
+                {$this->tbl_supplier->tbl}.id={$this->tbl_barang->tbl}.id_supplier 
+            left join 
+                {$this->tbl_stok->tbl} 
+            on
+                {$this->tbl_stok->tbl}.id_barang={$this->tbl_barang->tbl}.id
             where 
-                {$this->tbl_barang->tbl}.id_kategori = {$this->tbl_kategori->tbl}.id and 
-                {$this->tbl_barang->tbl}.id_satuan = {$this->tbl_satuan->tbl}.id and 
-                {$this->tbl_barang->tbl}.id_supplier = {$this->tbl_supplier->tbl}.id and 
                 (
-                    {$this->tbl_barang->tbl}.id like '%$search%' or
-                    {$this->tbl_kategori->tbl}.nama_kategori like '%$search%' or
+                    {$this->tbl_barang->tbl}.id like '%$search%' or 
+                    {$this->tbl_kategori->tbl}.nama_kategori like '%$search%' or 
                     {$this->tbl_satuan->tbl}.nama_satuan like '%$search%' or 
                     {$this->tbl_supplier->tbl}.nama_supplier like '%$search%' or 
                     {$this->tbl_barang->tbl}.kode_barang like '%$search%' or 
                     {$this->tbl_barang->tbl}.nama_barang like '%$search%' or 
-                    {$this->tbl_barang->tbl}.jumlah_barang like '%$search%' or 
-                    {$this->tbl_barang->tbl}.stok like '%$search%' or 
-                    {$this->tbl_barang->tbl}.harga_satuan like '%$search%' or 
-                    {$this->tbl_barang->tbl}.tanggal_masuk like '%$search%' or 
-                    {$this->tbl_barang->tbl}.expired_date like '%$search%'
+                    stok like '%$search%' or 
+                    {$this->tbl_barang->tbl}.harga_jual_satuan like '%$search%' 
                 ) 
-                and deleted_at is null 
+                and {$this->tbl_barang->tbl}.deleted_at is null 
+            group by {$this->tbl_barang->tbl}.id
             order by $column $dir 
             limit $start,$length");
-
-        foreach($data['data'] as $dat){
-            $dat->sisa_stok = array();
-            $dat->sisa_stok['jumlah_barang'] = $dat->jumlah_barang;
-            $dat->sisa_stok['stok'] = $dat->stok;
-        }
         $count = $this->tbl_barang->countAll();
         $data['recordsTotal'] = $count;
         $data['recordsFiltered'] = $count;
@@ -222,11 +224,8 @@ class Barang extends Alien_Core_Controller
             'nama_barang' => ['required', 'max:255'],
             'id_kategori' => ['required'],
             'id_satuan' => ['required'],
-            'jumlah_barang' => ['required', 'max:11'],
-            'stok' => ['required', 'max:11'],
-            'harga_satuan' => ['required', 'max:20'],
-            'tanggal_masuk' => ['required'],
-            'expired_date' => ['required']
+            'id_supplier' => ['required'],
+            'harga_jual_satuan' => ['required', 'max:20'],
         ]);
         try {
             $this->tbl_barang->update($request['id'], $request);
@@ -253,7 +252,7 @@ class Barang extends Alien_Core_Controller
     {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->tbl_log_stok->query("delete from {$this->tbl_log_stok->tbl} where id_barang='$request[id]'");
+            $this->tbl_stok->query("update {$this->tbl_stok->tbl} set deleted_at='" . date("Y-m-d", time()) . "' where id_barang='$request[id]'");
             $this->tbl_barang->moveToTrash($request['id']);
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
@@ -273,7 +272,8 @@ class Barang extends Alien_Core_Controller
         }
     }
 
-    public function deleteOutOfStock(){
+    public function deleteOutOfStock()
+    {
         $request = json_decode(file_get_contents('php://input'), true);
         try {
             $this->tbl_log_stok->query("delete from {$this->tbl_log_stok->tbl} where id_barang='$request[id]'");
@@ -306,16 +306,16 @@ class Barang extends Alien_Core_Controller
                 set 
                     jumlah_barang=$request[stok],
                     stok=stok + $request[stok],
-                    tanggal_masuk='".date('Y-m-d', time())."',
+                    tanggal_masuk='" . date('Y-m-d', time()) . "',
                     expired_date='$request[expired_date]'
                 where 
                     id='$request[id]'"
-                );
+            );
             $this->tbl_log->create([
                 'waktu' => $this->timestamp(),
                 'aktivitas' => 'put',
                 'id_user' => $this->getKey()->user->id,
-                'detail' => 'Menambah Stok Barang, stok '.$barang->stok.' -> '.((int)$barang->stok) + ((int)$request['stok']).' barang.id: ' . $request['id']
+                'detail' => 'Menambah Stok Barang, stok ' . $barang->stok . ' -> ' . ((int)$barang->stok) + ((int)$request['stok']) . ' barang.id: ' . $request['id']
             ]);
             $this->tbl_log_stok->create([
                 'id_barang' => $barang->id,

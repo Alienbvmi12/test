@@ -52,34 +52,28 @@
                                         ?>
                                     </ul>
                                 </div>
-                                <label for="">Satuan</label>
-                                <input type="hidden" id="satuan">
-                                <div class="dropdown mb-3">
-                                    <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="satuan-select" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Pilih Satuan
-                                    </button>
-                                    <ul class="dropdown-menu shadow" aria-labelledby="satuan-select" style="width : 100%;">
-                                        <div class="dropdown-item"><input class="form-control" type="search" oninput="filterFunction(this)" placeholder="search"></div>
-                                        <?php
-                                        foreach ($satuan as $sat) {
-                                        ?>
-                                            <li><a class="dropdown-item" data-select="<?= $sat->id ?>" onclick="$('#satuan').val(<?= $sat->id ?>); $('#satuan-select').html('<?= $sat->nama_satuan ?>')"><?= $sat->nama_satuan ?></a></li>
-                                        <?php
-                                        }
-                                        ?>
-                                    </ul>
-                                </div>
-                                <label>Jumlah</label>
-                                <input class="form-control mb-3" type="number" id="jumlah_barang" name="jumlah_barang" min="1" required>
-
                         </div>
                         <div class="col-sm-6" id="uluk">
-                            <label>Stok</label>
-                            <input class="form-control mb-3" type="number" id="stok" name="stok" min="0" required>
-                            <label>Harga Satuan</label>
-                            <input class="form-control mb-3" type="number" id="harga_satuan" name="harga_satuan" min="1" required>
+                            <label for="">Satuan</label>
+                            <input type="hidden" id="satuan">
+                            <div class="dropdown mb-3">
+                                <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="satuan-select" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Pilih Satuan
+                                </button>
+                                <ul class="dropdown-menu shadow" aria-labelledby="satuan-select" style="width : 100%;">
+                                    <div class="dropdown-item"><input class="form-control" type="search" oninput="filterFunction(this)" placeholder="search"></div>
+                                    <?php
+                                    foreach ($satuan as $sat) {
+                                    ?>
+                                        <li><a class="dropdown-item" data-select="<?= $sat->id ?>" onclick="$('#satuan').val(<?= $sat->id ?>); $('#satuan-select').html('<?= $sat->nama_satuan ?>')"><?= $sat->nama_satuan ?></a></li>
+                                    <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                            <label>Harga Jual Per Satuan</label>
+                            <input class="form-control mb-3" type="number" id="harga_jual_satuan" name="harga_jual_satuan" min="1" required>
                             <label for="">Supplier</label>
-
                             <input type="hidden" id="supplier">
                             <div class="dropdown mb-3">
                                 <button class="form-control bg-white dropdown-toggle" style="text-align : left" type="button" id="supplier-select" data-bs-toggle="dropdown" aria-expanded="false">
@@ -97,10 +91,6 @@
                                 </ul>
                             </div>
                             </select>
-                            <label>Tanggal Masuk</label>
-                            <input class="form-control mb-3" type="date" id="tanggal_masuk" name="tanggal_masuk" required>
-                            <label>Tanggal Kadaluarsa</label>
-                            <input class="form-control mb-3" type="date" id="expired_date" name="expired_date" required>
                             <input type="hidden" id="id">
                         </div>
                     </div>

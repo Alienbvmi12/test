@@ -13,9 +13,11 @@
             url: requestReadUrl,
             dataSrc: 'data'
         },
-        order: [[0, 'desc']],
+        order: [
+            [0, 'desc']
+        ],
         columns: [{
-                data: 'id',
+                data: 'id_barang',
                 title: 'ID'
             },
             {
@@ -28,37 +30,61 @@
             },
             {
                 data: 'kategori',
+                render: function(data, type, row) {
+                    if (data == null || data == '') {
+                        return "-";
+                    } else {
+                        return data
+                    }
+                },
                 title: 'Kategori'
             },
             {
                 data: 'satuan',
+                render: function(data, type, row) {
+                    if (data == null || data == '') {
+                        return "-";
+                    } else {
+                        return data
+                    }
+                },
                 title: 'Satuan'
             },
             {
-                data: 'sisa_stok',
+                data: 'stok',
                 render: function(data, type, row) {
-                    return data.jumlah_barang + "/" + data.stok;
+                    if (data == null || data == '') {
+                        return 0;
+                    } else {
+                        return data
+                    }
                 },
                 title: 'Stok'
             },
             {
-                data: 'harga_satuan',
+                data: 'harga_jual_satuan',
                 render: function(data, type, row) {
                     return parseInt(data).toLocaleString('id-ID', {
                         style: 'currency',
                         currency: 'IDR'
                     });
                 },
-                title: 'Harga Per Unit'
+                title: 'Harga Jual Per Satuan'
             },
             {
-                data: 'expired_date',
-                title: 'Tanggal Kadaluarsa'
+                data: 'supplier',
+                render: function(data, type, row) {
+                    if (data == null || data == '') {
+                        return "-";
+                    } else {
+                        return data
+                    }
+                },
+                title: 'Supplier'
             },
             {
                 defaultContent: `
                     <button class="btn btn-primary btn-sm mb-1" onclick="userDetail(this)">Detail</button>
-                    <button class="btn btn-info btn-sm mb-1" onclick="modalStok(this)" data-bs-toggle="modal" data-bs-target="#modalStok">Stok</button>
                     <button class="btn btn-warning btn-sm mb-1" onclick="modal(this, 'edit')" data-bs-toggle="modal" data-bs-target="#editm">Edit</button>
                     <button class="btn btn-danger btn-sm mb-1" onclick="deleteUser(this)">Hapus</button>
                 `,
@@ -66,12 +92,7 @@
             }
         ],
         rowCallback: function(row, data) {
-            let stockPercent = (parseInt(data.sisa_stok.stok) / parseInt(data.sisa_stok.jumlah_barang)) * 100;
-            if (stockPercent <= 0) {
-                $(row).addClass('table-danger');
-            } else if (stockPercent <= 10) {
-                $(row).addClass('table-warning');
-            }
+
         },
         columnDefs: [{
             targets: 1,
@@ -126,12 +147,8 @@
                 nama_barang: $('#nama_barang').val(),
                 id_kategori: $('#kategori').val(),
                 id_satuan: $('#satuan').val(),
-                jumlah_barang: $('#jumlah_barang').val(),
-                stok: $('#stok').val(),
-                harga_satuan: $('#harga_satuan').val(),
-                id_supplier: $('#supplier').val(),
-                tanggal_masuk: $('#tanggal_masuk').val(),
-                expired_date: $('#expired_date').val()
+                harga_jual_satuan: $('#harga_jual_satuan').val(),
+                id_supplier: $('#supplier').val()
             }),
             contentType: 'application/json',
             success: function(response) {
@@ -144,11 +161,7 @@
             },
             error: function(xhr, status, error) {
                 console.log(xhr);
-                Swal.fire(
-                    'Error',
-                    'An error occured: ' + error,
-                    'error'
-                );
+                toastr.error("<b>An error occured: </b>" + error);
             }
         });
     }
@@ -170,12 +183,8 @@
                     nama_barang: $('#nama_barang').val(),
                     id_kategori: $('#kategori').val(),
                     id_satuan: $('#satuan').val(),
-                    jumlah_barang: $('#jumlah_barang').val(),
-                    stok: $('#stok').val(),
-                    harga_satuan: $('#harga_satuan').val(),
-                    id_supplier: $('#supplier').val(),
-                    tanggal_masuk: $('#tanggal_masuk').val(),
-                    expired_date: $('#expired_date').val()
+                    harga_jual_satuan: $('#harga_jual_satuan').val(),
+                    id_supplier: $('#supplier').val()
                 }),
                 contentType: 'application/json',
                 success: function(response) {
@@ -187,11 +196,7 @@
                     readUser();
                 },
                 error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Error',
-                        'An error occured: ' + xhr.error,
-                        'error'
-                    );
+                    toastr.error("<b>An error occured: </b>" + error);
                 }
             });
         });
@@ -215,11 +220,7 @@
                     readUser();
                 },
                 error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Error',
-                        'An error occured: ' + error,
-                        'error'
-                    );
+                    toastr.error("<b>An error occured: </b>" + error);
                 }
             });
         });
@@ -245,13 +246,9 @@
         $('#satuan').val('');
         $('#kategori-select').html('Pilih kategori');
         $('#satuan-select').html('Pilih satuan');
-        $('#jumlah_barang').val('');
-        $('#stok').val('');
-        $('#harga_satuan').val('');
+        $('#harga_jual_satuan').val('');
         $('#supplier').val('');
         $('#supplier-select').html('Pilih supplier');
-        $('#tanggal_masuk').val('');
-        $('#expired_date').val('');
 
         //Isi value
 
@@ -269,20 +266,12 @@
                     $('#kategori-select').html(getHtml(document.getElementById("kategori-select"), response.id_kategori));
                     $('#satuan').val(response.id_satuan);
                     $('#satuan-select').html(getHtml(document.getElementById("satuan-select"), response.id_satuan));
-                    $('#jumlah_barang').val(response.jumlah_barang);
-                    $('#stok').val(response.stok);
-                    $('#harga_satuan').val(response.harga_satuan);
+                    $('#harga_jual_satuan').val(response.harga_jual_satuan);
                     $('#supplier').val(response.id_supplier);
                     $('#supplier-select').html(getHtml(document.getElementById("supplier-select"), response.id_supplier));
-                    $('#tanggal_masuk').val(response.tanggal_masuk);
-                    $('#expired_date').val(response.expired_date);
                 },
                 error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Error',
-                        'An error occured: ' + error,
-                        'error'
-                    );
+                    toastr.error("<b>An error occured: </b>" + error);
                 }
             });
         }
@@ -298,41 +287,13 @@
         const list = context.parentNode.childNodes[3];
         for (var i = 2; i < list.childNodes.length; i++) {
             if (list.childNodes[i].nodeName !== "#text") {
+                console.log(value);
                 if (parseInt(list.childNodes[i].childNodes[0].getAttribute("data-select")) == parseInt(value)) {
                     console.log(value);
                     return list.childNodes[i].childNodes[0].innerHTML;
                 }
             }
         }
-    }
-
-    function stock(id) {
-        $.ajax({
-            url: tambahStokUrl,
-            type: 'POST',
-            dataType: 'json',
-            data: JSON.stringify({
-                id: id,
-                stok: $('#tambah_stok').val(),
-                expired_date: $('#kadaluarsa').val()
-            }),
-            contentType: 'application/json',
-            success: function(response) {
-                Swal.fire(
-                    'Success',
-                    'Berhasil tambah stok',
-                    'success'
-                );
-                readUser();
-            },
-            error: function(xhr, status, error) {
-                Swal.fire(
-                    'Error',
-                    'An error occured: ' + error,
-                    'error'
-                );
-            }
-        });
     }
 
     function confirmAndExec(func, conBtn = 'btn btn-danger', canBtn = 'btn btn-success', txt = "You won't be able to revert this!") {
